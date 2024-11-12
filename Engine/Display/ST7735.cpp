@@ -3,6 +3,7 @@
 #include "ST7735.h"
 #include "pico/stdlib.h"
 #include "Engine/Utils/Utils.h"
+#include "hardware/spi.h"
 
 inline void ST7735::set_mosi(bool level){
     gpio_put(this->mosi_pin, level);   
@@ -32,14 +33,16 @@ inline void ST7735::send_color(uint16_t color){
     this->send_data(color >> 8);
 }
 
-void ST7735::send_byte(uint8_t byte){
-    for(int8_t i = 7; i >= 0; i--) {
+inline void ST7735::send_byte(uint8_t byte){
+    /*for(int8_t i = 7; i >= 0; i--) {
         this->set_mosi((byte >> i) & 0x01);
         this->set_sck(1);
         sleep_us(1);
         this->set_sck(0);
         sleep_us(1);
-    }
+    }*/
+
+   spi_write_blocking(spi0, &byte, 1);
 }
 
 void ST7735::send_command(uint8_t command){
@@ -75,11 +78,9 @@ ST7735::ST7735(
         this->rst = rst;
         this->dc = dc;
 
-        gpio_init(this->mosi_pin);
-        gpio_set_dir(this->mosi_pin, GPIO_OUT);
-
-        gpio_init(this->sck_pin);
-        gpio_set_dir(this->sck_pin, GPIO_OUT);
+        spi_init(spi0, 10000* 1000);
+        gpio_set_function(sck_pin, GPIO_FUNC_SPI);
+        gpio_set_function(mosi_pin, GPIO_FUNC_SPI);
 
         gpio_init(this->cs);
         gpio_set_dir(this->cs, GPIO_OUT);
@@ -96,11 +97,15 @@ ST7735::ST7735(
         this->send_command(0x11);
         sleep_ms(120);
 
+        this->send_command(0x36);
+        this->send_data(0x08);
+
         this->send_command(0x3A);
         this->send_data(0x05);
 
         this->send_command(0x29);
         sleep_ms(120);
+
     }
 
 void ST7735::set_addr_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
@@ -166,10 +171,8 @@ void ST7735::draw_sprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, co
     //this->send_command(ST7735_RAMWR);
     for(int i = 0; i < height; i++){
         for(int j = 0; j < width; j++){
-            //this->draw_pixel(x+i, y+j, sprite[i*width + j]);
             this->send_data(sprite[i * width + j] >> 8);
             this->send_data(sprite[i * width + j]);
-            //this->send_color(sprite[i * width + j]);
         }
     }
 }

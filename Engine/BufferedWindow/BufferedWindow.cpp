@@ -61,11 +61,18 @@ void BufferedWindow::update(){
 }
 
 void BufferedWindow::draw(){
+    display->draw_sprite(0, 0, this->width, this->height, front_buffer);
 
+    /* swapping the buffers */
+    uint16_t *temp;
+    temp = front_buffer;
+    front_buffer = back_buffer;
+    back_buffer = temp;
 }
 
 void BufferedWindow::fill_screen(uint16_t color){
     for (int i = 0; i < width * height; i++) {
         back_buffer[i] = color;
+        front_buffer[i] = color;
     }
 }
