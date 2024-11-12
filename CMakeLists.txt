@@ -35,18 +35,24 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Pico2D Pico2D.cpp )
+add_executable(Pico2D 
+        Pico2D.cpp 
+        Engine/Display/ST7735.cpp
+        Engine/Utils/Utils.cpp
+        Engine/BufferedWindow/BufferedWindow.cpp
+        )
 
 pico_set_program_name(Pico2D "Pico2D")
 pico_set_program_version(Pico2D "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(Pico2D 0)
-pico_enable_stdio_usb(Pico2D 0)
+pico_enable_stdio_usb(Pico2D 1)
 
 # Add the standard library to the build
 target_link_libraries(Pico2D
-        pico_stdlib)
+        pico_stdlib
+        hardware_spi)
 
 # Add the standard include files to the build
 target_include_directories(Pico2D PRIVATE

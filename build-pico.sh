@@ -84,13 +84,13 @@ if [ -z "$PICOTOOL_PATH" ]; then
     echo "picotool not found. "
 else
     current_path=`pwd`
-    sudo $PICOTOOL_PATH load $current_path/build/pico-gng.elf -fx
+    sudo $PICOTOOL_PATH load $current_path/build/Pico2D.elf -fx
 fi
 
 # see what s going on
 if $DEBUG; then
     sleep 1
-    screen /dev/ttyACM0 115200 &
+    sudo screen /dev/ttyACM0 115200 &
 
     if [ $? -eq 0 ]; then
         echo "It seems to be an error accesing /dev/ttyACM0."
