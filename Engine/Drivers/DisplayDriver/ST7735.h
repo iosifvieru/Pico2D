@@ -1,19 +1,21 @@
 // Iosif Vieru
 
+#include "pico/stdlib.h"
+#include "Display.h"
+
 #define SCK 18
 #define MOSI 19
 #define CS 17
 #define RST 21
 #define DC 20
 
-#include "pico/stdlib.h"
-#include "Display.h"
-
-// defines
 #define ST7735_CASET 0x2A
 #define ST7735_RASET 0x2B
 #define ST7735_RAMWR 0x2C
 
+/*
+Implements Display interface.
+*/
 class ST7735: public Display {
 private:
     uint8_t sck_pin;
@@ -52,8 +54,5 @@ public:
     /*
         Display interface implementation
     */
-    void draw_pixel(uint8_t x, uint8_t y, uint16_t color) override;
-    void draw_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color) override;
-    void draw_sprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16_t* sprite) override;
-    void fill_screen(uint8_t width, uint8_t height, uint16_t color) override;
+    virtual void flush(uint8_t width, uint8_t height, const uint16_t* buffer) = 0;
 };

@@ -35,11 +35,12 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Pico2D 
-        Pico2D.cpp 
+add_executable(Pico2D
+        main.cpp 
         Engine/Display/ST7735.cpp
         Engine/Utils/Utils.cpp
-        Engine/BufferedWindow/BufferedWindow.cpp
+        Engine/Renderer.cpp
+        Engine/SpriteNode.cpp
         )
 
 pico_set_program_name(Pico2D "Pico2D")

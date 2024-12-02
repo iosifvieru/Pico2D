@@ -127,62 +127,17 @@ void ST7735::set_addr_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
     this->send_command(ST7735_RAMWR);
 }
 
-void ST7735::draw_pixel(uint8_t x, uint8_t y, uint16_t color){
-    set_addr_window(x, y, x+1, y+1);
-
-    this->send_data(color >> 8);
-    this->send_data(color);
-}
-
 /*
-    Bresenham's algorithm
+    draws a buffer to the display
 */
-void ST7735::draw_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color) {
-    int dx = abs(x2 - x1);
-    int dy = abs(y2 - y1);
-    int sx = (x1 < x2) ? 1 : -1;
-    int sy = (y1 < y2) ? 1 : -1;
-    int err = dx - dy;
-
-    while (true) {
-        draw_pixel(x1, y1, color); 
-
-        if (x1 == x2 && y1 == y2) break; 
-
-        int e2 = 2 * err;
-
-        if (e2 > -dy) {
-            err -= dy;
-            x1 += sx;
-        }
-
-        if (e2 < dx) {
-            err += dx;
-            y1 += sy;
-        }
-    }
-}
-
-/*
-    Draws a sprite to a certain x, y position. 
-*/
-void ST7735::draw_sprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16_t* sprite){
-    set_addr_window(x, y, x + width - 1, y + height - 1);
+void ST7735::flush(uint8_t width, uint8_t height, const uint16_t* buffer){
+    set_addr_window(0, 0, 0 + width - 1, 0 + height - 1);
     //this->send_command(ST7735_RAMWR);
     for(int i = 0; i < height; i++){
         for(int j = 0; j < width; j++){
-            this->send_data(sprite[i * width + j] >> 8);
-            this->send_data(sprite[i * width + j]);
+            this->send_data(buffer[i * width + j] >> 8);
+            this->send_data(buffer[i * width + j]);
         }
-    }
-}
-
-void ST7735::fill_screen(uint8_t width, uint8_t height, uint16_t color){
-    this->send_command(ST7735_RAMWR);
-    for(int i = 0 ; i < width*height; i++){
-        //this->send_data(color & 0xFF);
-        //this->send_data(color >> 8);
-        this->send_color(color);
     }
 }
 
