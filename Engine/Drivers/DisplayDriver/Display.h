@@ -11,9 +11,15 @@ public:
     virtual ~Display() = default;
     
     /*
-    draws a buffer to the display
+    draws a buffer to the display.
+    each display implements it s on way to communicate with the hardware.
+
+    for example in the ST7735's case the communication is made using SPI.
     */
-    virtual void flush(uint8_t width, uint8_t height, const uint16_t* buffer) = 0; 
+    virtual void flush(const uint16_t* buffer) = 0;
+
+    virtual uint16_t get_height() = 0;
+    virtual uint16_t get_width() = 0;
 };
 
 #endif

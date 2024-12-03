@@ -5,6 +5,8 @@
 #include "Engine/Utils/Utils.h"
 #include "hardware/spi.h"
 
+ST7735* ST7735::instance = nullptr;
+
 inline void ST7735::set_mosi(bool level){
     gpio_put(this->mosi_pin, level);   
 }
@@ -130,13 +132,13 @@ void ST7735::set_addr_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
 /*
     draws a buffer to the display
 */
-void ST7735::flush(uint8_t width, uint8_t height, const uint16_t* buffer){
-    set_addr_window(0, 0, 0 + width - 1, 0 + height - 1);
+void ST7735::flush(const uint16_t* buffer){
+    set_addr_window(0, 0, 0 + ST7735_WIDTH - 1, 0 + ST7735_HEIGHT - 1);
     //this->send_command(ST7735_RAMWR);
-    for(int i = 0; i < height; i++){
-        for(int j = 0; j < width; j++){
-            this->send_data(buffer[i * width + j] >> 8);
-            this->send_data(buffer[i * width + j]);
+    for(int i = 0; i < ST7735_HEIGHT; i++){
+        for(int j = 0; j < ST7735_WIDTH; j++){
+            this->send_data(buffer[i * ST7735_WIDTH + j] >> 8);
+            this->send_data(buffer[i * ST7735_WIDTH + j]);
         }
     }
 }

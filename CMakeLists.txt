@@ -37,10 +37,9 @@ pico_sdk_init()
 
 add_executable(Pico2D
         main.cpp 
-        Engine/Display/ST7735.cpp
-        Engine/Utils/Utils.cpp
-        Engine/Renderer.cpp
-        Engine/SpriteNode.cpp
+        Engine/Drivers/DisplayDriver/ST7735.cpp
+        Engine/Canvas/BufferedCanvas.cpp
+        Engine/Renderer/BasicRenderer.cpp
         )
 
 pico_set_program_name(Pico2D "Pico2D")
@@ -60,6 +59,10 @@ target_include_directories(Pico2D PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
 )
+
+if(DEFINED _LOG_)
+    add_compile_definitions(_LOG_)
+endif()
 
 pico_add_extra_outputs(Pico2D)
 

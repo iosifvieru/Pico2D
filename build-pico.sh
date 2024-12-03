@@ -2,9 +2,10 @@
 # created by Iosif Vieru.
 # 26.09.2024
 
-OPTSTRING=":qhd"
+OPTSTRING=":qhld"
 QUIET=false
 DEBUG=false
+LOGGING=false
 
 PICOTOOL_PATH=$(which picotool)
 #PICOTOOL_PATH="/home/$USER/.pico-sdk/picotool/2.0.0/picotool/picotool"
@@ -24,7 +25,7 @@ help()
             -q \t\t = Quiet mode -> the program won't print details about the build and run execution.
             -h \t\t = Help -> details about usage and options.
             -d \t\t = Debug -> prints stdio usb communcation
-    
+            -l \t\t = Enable logging -> compiles with logging enabled (_LOG_)
     "
 }
 
@@ -42,6 +43,10 @@ while getopts ${OPTSTRING} opt; do
             DEBUG=true
             echo "Debug mode on."
             ;;
+        l)
+            LOGGING=true
+            echo "Logging enabled (_LOG_)."
+            ;;
         ?)
             usage
             exit 1
@@ -51,10 +56,18 @@ done
 
 # cmake
 if $QUIET; then
-    cmake -B build -S . -G Ninja 2>&1
+    if $LOGGING; then
+        cmake -B build -S . -G Ninja -D_LOG_=ON 2>&1
+    else
+        cmake -B build -S . -G Ninja 2>&1
+    fi
     cmake build/ > /dev/null 2>&1
 else
-    cmake -B build -S . -G Ninja 2>&1
+    if $LOGGING; then
+        cmake -B build -S . -G Ninja -D_LOG_=ON 2>&1
+    else
+        cmake -B build -S . -G Ninja 2>&1
+    fi
     cmake build/
 fi
 
